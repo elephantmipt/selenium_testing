@@ -2,8 +2,8 @@ import argparse
 import time
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
-from .utils import set_city_to_moscow
-from .sign_in_test import (
+from src.utils import set_city_to_moscow
+from src.sign_in_test import (
     test_sign_in_code, test_sign_in_form_phone_number,
 )
 

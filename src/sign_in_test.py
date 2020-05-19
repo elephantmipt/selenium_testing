@@ -42,8 +42,10 @@ def test_sign_in_form_phone_number(browser: webdriver.Chrome):
     phone_field.send_keys("7890123554")  # valid
     assert phone_field.get_attribute("value") == "+7 (789) 012-35-54"
     phone_field.clear()
+    time.sleep(0.6)
+    phone_field.send_keys("78901")  # valid too long
     time.sleep(0.3)
-    phone_field.send_keys("7890123554")  # valid too long
+    phone_field.send_keys("23554")  # valid too long
     time.sleep(0.3)
     phone_field.send_keys("9889")
     assert phone_field.get_attribute("value") == "+7 (789) 012-35-54"
