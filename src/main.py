@@ -1,11 +1,24 @@
 import argparse
 import time
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
+import webdrivermanager
 from src.utils import set_city_to_moscow
 from src.sign_in_test import (
     test_sign_in_code, test_sign_in_form_phone_number,
 )
+
+
+MAPPING_DRIVER_MANAGER = {
+    "chrome": webdrivermanager.ChromeDriverManager,
+    "mozilla": webdrivermanager.GeckoDriverManager,
+    "opera": webdrivermanager.OperaChromiumDriverManager,
+}
+
+MAPPING_DRIVER = {
+    "chrome": webdriver.Chrome,
+    "mozilla": webdriver.Firefox,
+    "opera": webdriver.Opera,
+}
 
 
 def test_hipsta_bread(browser):
@@ -70,7 +83,10 @@ def test_city_change(browser: webdriver.Chrome):
 
 
 def main(args):
-    browser = webdriver.Chrome(ChromeDriverManager().install())
+    manager = MAPPING_DRIVER_MANAGER[args.browser]()
+    driver = MAPPING_DRIVER[args.browser]
+    path = manager.download_and_install(version=args.version)[0]
+    browser = driver(path)
     test_hipsta_bread(browser)
     test_sign_in_form_phone_number(browser)
     test_sign_in_code(browser)
@@ -80,5 +96,10 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--browser", default="chrome", type=str, required=False)
+    parser.add_argument("--version", default="latest", type=str, required=False)
     args = parser.parse_args()
+    if args.browser not in MAPPING_DRIVER_MANAGER.keys():
+        raise Exception(f"Your driver {args.browser} is not supported")
+
     main(args)
